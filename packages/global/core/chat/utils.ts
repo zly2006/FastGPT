@@ -7,7 +7,6 @@ import {
   type ChatItemType,
   type UserChatItemValueItemType
 } from './type.d';
-import { sliceStrStartEnd } from '../../common/string/tools';
 import { PublishChannelEnum } from '../../support/outLink/constant';
 import { removeDatasetCiteText } from '../ai/llm/utils';
 
@@ -78,7 +77,7 @@ export const getHistoryPreview = (
 
     return {
       obj: item.obj,
-      value: sliceStrStartEnd(rawText, n, n)
+      value: rawText
     };
   });
 };
@@ -192,7 +191,7 @@ export const getChatSourceByPublishChannel = (publishChannel: PublishChannelEnum
   }
 };
 
-/* 
+/*
   Merge chat responseData
   1. Same tool mergeSignId (Interactive tool node)
   2. Recursively merge plugin details with same mergeSignId

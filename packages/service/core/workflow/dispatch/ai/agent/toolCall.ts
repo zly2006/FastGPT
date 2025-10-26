@@ -16,7 +16,6 @@ import { GPTMessages2Chats } from '@fastgpt/global/core/chat/adapt';
 import type { AIChatItemType } from '@fastgpt/global/core/chat/type';
 import { formatToolResponse, initToolCallEdges, initToolNodes } from './utils';
 import { computedMaxToken } from '../../../../ai/utils';
-import { sliceStrStartEnd } from '@fastgpt/global/common/string/tools';
 import type { WorkflowInteractiveResponseType } from '@fastgpt/global/core/workflow/template/system/interactive/type';
 import { ChatItemValueTypeEnum } from '@fastgpt/global/core/chat/constants';
 import { getErrText } from '@fastgpt/global/common/error/utils';
@@ -28,23 +27,23 @@ type ToolRunResponseType = {
   toolMsgParams: ChatCompletionToolMessageParam;
 }[];
 
-/* 
+/*
   调用思路：
   先Check 是否是交互节点触发
-    
+
   交互模式：
   1. 从缓存中获取工作流运行数据
   2. 运行工作流
   3. 检测是否有停止信号或交互响应
     - 无：汇总结果，递归运行工具
     - 有：缓存结果，结束调用
-  
+
   非交互模式：
   1. 组合 tools
   2. 过滤 messages
   3. Load request llm messages: system prompt, histories, human question, （assistant responses, tool responses, assistant responses....)
   4. 请求 LLM 获取结果
-    
+
     - 有工具调用
       1. 批量运行工具的工作流，获取结果（工作流原生结果，工具执行结果）
       2. 合并递归中，所有工具的原生运行结果
@@ -125,7 +124,7 @@ export const runToolCall = async (
           toolName: '',
           toolAvatar: '',
           params: '',
-          response: sliceStrStartEnd(stringToolResponse, 5000, 5000)
+          response: stringToolResponse
         }
       }
     });
@@ -405,7 +404,7 @@ export const runToolCall = async (
             toolName: '',
             toolAvatar: '',
             params: '',
-            response: sliceStrStartEnd(stringToolResponse, 5000, 5000)
+            response: stringToolResponse
           }
         }
       });
@@ -424,7 +423,7 @@ export const runToolCall = async (
             toolName: '',
             toolAvatar: '',
             params: '',
-            response: sliceStrStartEnd(err, 5000, 5000)
+            response: err
           }
         }
       });
@@ -435,7 +434,7 @@ export const runToolCall = async (
           tool_call_id: tool.id,
           role: ChatCompletionRequestMessageRoleEnum.Tool,
           name: tool.function.name,
-          content: sliceStrStartEnd(err, 5000, 5000)
+          content: err
         }
       });
     }
@@ -458,7 +457,7 @@ export const runToolCall = async (
     : usage.outputTokens;
 
   if (toolCalls.length > 0) {
-    /* 
+    /*
       ...
       user
       assistant: tool data
@@ -469,7 +468,7 @@ export const runToolCall = async (
       ...toolsRunResponse.map((item) => item?.toolMsgParams)
     ];
 
-    /* 
+    /*
       Get tool node assistant response
       - history assistant
       - current tool assistant

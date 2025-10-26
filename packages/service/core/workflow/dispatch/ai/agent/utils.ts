@@ -1,4 +1,3 @@
-import { sliceStrStartEnd } from '@fastgpt/global/common/string/tools';
 import { ChatItemValueTypeEnum } from '@fastgpt/global/core/chat/constants';
 import { type AIChatItemValueItemType } from '@fastgpt/global/core/chat/type';
 import { type FlowNodeInputItemType } from '@fastgpt/global/core/workflow/type/io';
@@ -24,7 +23,7 @@ export const filterToolResponseToPreview = (response: AIChatItemValueItemType[])
       const formatTools = item.tools?.map((tool) => {
         return {
           ...tool,
-          response: sliceStrStartEnd(tool.response, 500, 500)
+          response: tool.response
         };
       });
       return {
